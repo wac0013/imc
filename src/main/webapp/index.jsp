@@ -1,4 +1,29 @@
 <!DOCTYPE html>
+<%
+  double peso = Double.parseDouble((request.getParameter("peso") != null) ? request.getParameter("peso") : "0");
+  double altura = Double.parseDouble((request.getParameter("altura") != null) ? request.getParameter("altura") : "0");
+  String mensagem = "";
+
+  double imc = (peso / (altura * altura));
+  
+  if (imc < 16) {
+    mensagem = "Magreza grave";
+  } else if (16 <= imc && imc < 17) {
+    mensagem = "Magreza moderada";
+  } else if (17 <= imc && imc < 18.5) {
+    mensagem = "Magreza leve";
+  } else if (18.5 <= imc && imc < 25) {
+    mensagem = "Saldável";
+  } else if (25 <= imc && imc < 30) {
+    mensagem = "Sobrepeso";
+  } else if (30 <= imc && imc < 35) {
+    mensagem = "Obesidade Grau I";
+  } else if (35 <= imc && imc < 40) {
+    mensagem = "Obesidade Grau II (severa)";
+  } else {
+    mensagem = "Obesidade Grau III (mórbida)";
+  }
+%>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -26,11 +51,10 @@
   <div class="ui middle aligned grid">
     <div class="row">
     <div class="column">      
-      <form id="formulario" class="ui form" >
+      <form id="formulario" class="ui form">
         <div class="ui red raised centered card">
           <div class="content">
             <div class="center aligned header"><h3>Calculadora IMC</h3></div>
-            <div class="meta" id="imc"><span>Calculado pela última vez as {{last_update}}</span></div>
           </div>
           <div class="extra content">
             <div class="field required">
@@ -67,24 +91,24 @@
               </div>
             </div>
           </div>
-          <button class="ui bottom attached orange button" type="submit" >Calcular</button>
+          <button class="ui bottom attached orange button" onclick="$('#mensagem_erro').modal('show')">Calcular</button>
         </div>
-        <div class="ui modal red message" id="mensagem_erro">          
+        <div class="ui message" id="mensagem_erro">          
           <div style="text-align: center"><i class="times circle outline huge icon"></i></div>
           <div class="ui error message"></div>          
         </div>   
       </form>
-      
       <div class="ui modal message" style="text-align: center" id="resultado">
         <div><i class="exclamation triangle huge icon" id="icone_resultado"></i></div>
-        <p>
-            Seu Índice de Massa Corpórea (IMC) é {{resultado.valor}} <br>
-            {{resultado.mensagem}}
-        </p> 
+          <p>
+            <%
+              out.println(" Seu Índice de Massa Corpórea (IMC) é " + imc + "\n" + mensagem);
+            %>
+          </p> 
+        </div>
       </div>
     </div>
-    </div>
-    <div class="row">      
+    <div class="row">
       <div class="column">
           <table class="ui red two column unstackable celled table">
             <thead>
@@ -123,7 +147,6 @@
       </div>
     </div>
   </div>
-
   <script>
     var last_update;
     var resultado = {valor: 0, mensagem: ''};
@@ -155,107 +178,12 @@
             prompt: 'Altura deve ser informado'
           }]          
         }
-      },      
-      onSuccess: function(){
-        last_update   = new Date();
-        last_update = last_update.getHours() + ':' + last_update.getMinutes() + ':' + last_update.getSeconds()
-        const peso    = $('#peso').val(),
-              sexo    = $('#sexo').val();
-              altura  = $('#altura').val();
-
-        resultado.valor = (peso / (altura * altura)).toFixed(2);
-
-        if (resultado.valor < 16){
-          resultado.mensagem = 'Magreza grave';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'times circle outline huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message red');
-
-        } else if (16 <= resultado.valor && resultado.valor < 17) {
-          resultado.mensagem = 'Magreza moderada';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'exclamation circle huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message orange');
-
-        } else if (17 <= resultado.valor && resultado.valor < 18.5) {
-          resultado.mensagem = 'Magreza leve';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'times circle outline huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message yellow');
-
-        } else if (18.5 <= resultado.valor && resultado.valor < 25) {
-          resultado.mensagem = 'Saldável';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'check circle outline huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message green');
-
-        } else if (25 <= resultado.valor && resultado.valor < 30) {
-          resultado.mensagem = 'Sobrepeso';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'exclamation triangle huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message olive');
-          
-        } else if (30 <= resultado.valor && resultado.valor < 35) {
-          resultado.mensagem = 'Obesidade Grau I';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'exclamation circle huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message yellow');
-
-        } else if (35 <= resultado.valor && resultado.valor < 40) {
-          resultado.mensagem = 'Obesidade Grau II (severa)';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'times circle outline huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message orange');
-
-        } else {
-          resultado.mensagem = 'Obesidade Grau III (mórbida)';
-
-          $('#icone_resultado').removeAttr('class');
-          $('#icone_resultado').attr('class', 'times circle outline huge icon');
-          $('#resultado').removeAttr('class');
-          $('#resultado').attr('class', 'ui modal message red');
-        }
-
-        $('#resultado').modal('show');
-        return false;
       },
       onFailure: function(){
         $('#mensagem_erro').modal('show');
         return false;
       }    
     });
-
-    new Vue({
-      el: '#imc',
-      data() {
-        return {
-          last_update
-        }
-      }
-    })
-
-    new Vue({
-      el: '#resultado',
-      data() {
-        return {
-          resultado
-        }
-      }
-    })
   </script>
 </body>
 </html>
