@@ -99,7 +99,6 @@
         </div>   
       </form>
       <div class="ui modal message" style="text-align: center" id="resultado">
-        <div><i class="exclamation triangle huge icon" id="icone_resultado"></i></div>
           <p>
             <%
               out.println(" Seu Índice de Massa Corpórea (IMC) é " + imc + "\n" + mensagem);
